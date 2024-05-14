@@ -456,7 +456,8 @@ export function ChatActions(props: {
   const [showUploadImage, setShowUploadImage] = useState(false);
 
   useEffect(() => {
-    const show = isVisionModel(currentModel);
+    // const show = isVisionModel(currentModel);
+    const show = true;
     setShowUploadImage(show);
     if (!show) {
       props.setAttachImages([]);
@@ -489,13 +490,6 @@ export function ChatActions(props: {
           onClick={props.scrollToBottom}
           text={Locale.Chat.InputActions.ToBottom}
           icon={<BottomIcon />}
-        />
-      )}
-      {props.hitBottom && (
-        <ChatAction
-          onClick={props.showPromptModal}
-          text={Locale.Chat.InputActions.Settings}
-          icon={<SettingsIcon />}
         />
       )}
 
@@ -927,7 +921,7 @@ function _Chat() {
   };
 
   const context: RenderMessage[] = useMemo(() => {
-    return session.mask.hideContext ? [] : session.mask.context.slice();
+    return session.mask?.hideContext ? [] : session.mask.context?.slice();
   }, [session.mask.context, session.mask.hideContext]);
   const accessStore = useAccessStore();
 
@@ -1102,11 +1096,13 @@ function _Chat() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  
+
   const handlePaste = useCallback(
     async (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
       const currentModel = chatStore.currentSession().mask.modelConfig.model;
-      if(!isVisionModel(currentModel)){return;}
+      if (!isVisionModel(currentModel)) {
+        return;
+      }
       const items = (event.clipboardData || window.clipboardData).items;
       for (const item of items) {
         if (item.kind === "file" && item.type.startsWith("image/")) {
@@ -1250,12 +1246,6 @@ function _Chat() {
             </div>
           )}
         </div>
-
-        <PromptToast
-          showToast={!hitBottom}
-          showModal={showPromptModal}
-          setShowModal={setShowPromptModal}
-        />
       </div>
 
       <div

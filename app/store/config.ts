@@ -44,6 +44,7 @@ export const DEFAULT_CONFIG = {
 
   customModels: "",
   models: DEFAULT_MODELS as any as LLMModel[],
+  target: "",
 
   modelConfig: {
     model: "gpt-3.5-turbo" as ModelType,

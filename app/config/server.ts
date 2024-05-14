@@ -33,6 +33,9 @@ declare global {
 
       // google tag manager
       GTM_ID?: string;
+
+      // experience api
+      AI_EXPERIENCE?: string;
     }
   }
 }
@@ -117,5 +120,6 @@ export const getServerSideConfig = () => {
     disableFastLink: !!process.env.DISABLE_FAST_LINK,
     customModels,
     whiteWebDevEndpoints,
+    AI_EXPERIENCE: process.env.AI_EXPERIENCE,
   };
 };

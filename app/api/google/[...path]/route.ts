@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "../../auth";
 import { getServerSideConfig } from "@/app/config/server";
-import { GEMINI_BASE_URL, Google, ModelProvider } from "@/app/constant";
+import {
+  GEMINI_BASE_URL,
+  Google,
+  ModelProvider,
+  AI_EXPERIENCE_URL,
+} from "@/app/constant";
 
 async function handle(
   req: NextRequest,

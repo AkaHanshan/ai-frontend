@@ -35,6 +35,7 @@ export interface LLMConfig {
   stream?: boolean;
   presence_penalty?: number;
   frequency_penalty?: number;
+  target?: string;
 }
 
 export interface ChatOptions {
@@ -159,8 +160,9 @@ export function getHeaders() {
     "Content-Type": "application/json",
     Accept: "application/json",
   };
-  const modelConfig = useChatStore.getState().currentSession().mask.modelConfig;
-  const isGoogle = modelConfig.model.startsWith("gemini");
+  const modelConfig = useChatStore.getState().currentSession()?.mask
+    .modelConfig;
+  const isGoogle = modelConfig?.model.startsWith("gemini");
   const isAzure = accessStore.provider === ServiceProvider.Azure;
   const authHeader = isAzure ? "api-key" : "Authorization";
   const apiKey = isGoogle

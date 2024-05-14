@@ -17,6 +17,7 @@ export type Mask = {
   modelConfig: ModelConfig;
   lang: Lang;
   builtin: boolean;
+  target?: string;
 };
 
 export const DEFAULT_MASK_STATE = {
@@ -37,6 +38,7 @@ export const createEmptyMask = () =>
     lang: getLang(),
     builtin: false,
     createdAt: Date.now(),
+    target: "",
   }) as Mask;
 
 export const useMaskStore = createPersistStore(

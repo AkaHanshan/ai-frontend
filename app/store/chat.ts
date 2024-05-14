@@ -299,6 +299,7 @@ export const useChatStore = createPersistStore(
       async onUserInput(content: string, attachImages?: string[]) {
         const session = get().currentSession();
         const modelConfig = session.mask.modelConfig;
+        const target = session.mask?.target;
 
         const userContent = fillTemplateWith(content, modelConfig);
         console.log("[User Input] after template: ", userContent);
@@ -363,7 +364,7 @@ export const useChatStore = createPersistStore(
         // make request
         api.llm.chat({
           messages: sendMessages,
-          config: { ...modelConfig, stream: true },
+          config: { ...modelConfig, stream: true, target },
           onUpdate(message) {
             botMessage.streaming = true;
             if (message) {
@@ -432,7 +433,6 @@ export const useChatStore = createPersistStore(
         const clearContextIndex = session.clearContextIndex ?? 0;
         const messages = session.messages.slice();
         const totalMessageCount = session.messages.length;
-
         // in-context prompts
         const contextPrompts = session.mask.context.slice();
 

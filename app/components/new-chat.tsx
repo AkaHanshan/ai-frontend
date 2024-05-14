@@ -118,7 +118,7 @@ export function NewChat() {
           text={Locale.NewChat.Return}
           onClick={() => navigate(Path.Home)}
         ></IconButton>
-        {!state?.fromHome && (
+        {/* {!state?.fromHome && (
           <IconButton
             text={Locale.NewChat.NotShow}
             onClick={async () => {
@@ -130,7 +130,7 @@ export function NewChat() {
               }
             }}
           ></IconButton>
-        )}
+        )} */}
       </div>
       <div className={styles["mask-cards"]}>
         <div className={styles["mask-card"]}>
@@ -147,7 +147,7 @@ export function NewChat() {
       <div className={styles["title"]}>{Locale.NewChat.Title}</div>
       <div className={styles["sub-title"]}>{Locale.NewChat.SubTitle}</div>
 
-      <div className={styles["actions"]}>
+      {/* <div className={styles["actions"]}>
         <IconButton
           text={Locale.NewChat.More}
           onClick={() => navigate(Path.Masks)}
@@ -164,7 +164,7 @@ export function NewChat() {
           shadow
           className={styles["skip"]}
         />
-      </div>
+      </div> */}
 
       <div className={styles["masks"]} ref={maskRef}>
         {groups.map((masks, i) => (

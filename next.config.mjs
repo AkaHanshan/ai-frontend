@@ -33,6 +33,9 @@ const nextConfig = {
   experimental: {
     forceSwcTransforms: true,
   },
+  publicRuntimeConfig: {
+    AI_EXPERIENCE: process.env.AI_EXPERIENCE
+  }
 };
 
 const CorsHeaders = [
