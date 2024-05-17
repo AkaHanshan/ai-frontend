@@ -201,90 +201,90 @@ export class ChatGPTApi implements LLMApi {
 
         controller.signal.onabort = finish;
 
-        fetchEventSource(chatPath, {
-          ...chatPayload,
-          async onopen(res) {
-            clearTimeout(requestTimeoutId);
-            const contentType = res.headers.get("content-type");
-            console.log(
-              "[OpenAI] request response content type: ",
-              contentType,
-            );
+        // fetchEventSource(chatPath, {
+        //   ...chatPayload,
+        //   async onopen(res) {
+        //     clearTimeout(requestTimeoutId);
+        //     const contentType = res.headers.get("content-type");
+        //     console.log(
+        //       "[OpenAI] request response content type: ",
+        //       contentType,
+        //     );
 
-            if (contentType?.startsWith("text/plain")) {
-              responseText = await res.clone().text();
-              return finish();
-            }
+        //     if (contentType?.startsWith("text/plain")) {
+        //       responseText = await res.clone().text();
+        //       return finish();
+        //     }
 
-            if (
-              !res.ok ||
-              !res.headers
-                .get("content-type")
-                ?.startsWith(EventStreamContentType) ||
-              res.status !== 200
-            ) {
-              const responseTexts = [responseText];
-              let extraInfo = await res.clone().text();
-              try {
-                const resJson = await res.clone().json();
-                extraInfo = prettyObject(resJson);
-              } catch {}
+        //     if (
+        //       !res.ok ||
+        //       !res.headers
+        //         .get("content-type")
+        //         ?.startsWith(EventStreamContentType) ||
+        //       res.status !== 200
+        //     ) {
+        //       const responseTexts = [responseText];
+        //       let extraInfo = await res.clone().text();
+        //       try {
+        //         const resJson = await res.clone().json();
+        //         extraInfo = prettyObject(resJson);
+        //       } catch {}
 
-              if (res.status === 401) {
-                responseTexts.push(Locale.Error.Unauthorized);
-              }
+        //       if (res.status === 401) {
+        //         responseTexts.push(Locale.Error.Unauthorized);
+        //       }
 
-              if (extraInfo) {
-                responseTexts.push(extraInfo);
-              }
+        //       if (extraInfo) {
+        //         responseTexts.push(extraInfo);
+        //       }
 
-              responseText = responseTexts.join("\n\n");
+        //       responseText = responseTexts.join("\n\n");
 
-              return finish();
-            }
-          },
-          onmessage(msg) {
-            if (msg.data === "[DONE]" || finished) {
-              return finish();
-            }
-            const text = msg.data;
-            try {
-              const json = JSON.parse(text);
-              const choices = json.choices as Array<{
-                delta: { content: string };
-              }>;
-              const delta = choices[0]?.delta?.content;
-              const textmoderation = json?.prompt_filter_results;
+        //       return finish();
+        //     }
+        //   },
+        //   onmessage(msg) {
+        //     if (msg.data === "[DONE]" || finished) {
+        //       return finish();
+        //     }
+        //     const text = msg.data;
+        //     try {
+        //       const json = JSON.parse(text);
+        //       const choices = json.choices as Array<{
+        //         delta: { content: string };
+        //       }>;
+        //       const delta = choices[0]?.delta?.content;
+        //       const textmoderation = json?.prompt_filter_results;
 
-              if (delta) {
-                remainText += delta;
-              }
+        //       if (delta) {
+        //         remainText += delta;
+        //       }
 
-              if (
-                textmoderation &&
-                textmoderation.length > 0 &&
-                ServiceProvider.Azure
-              ) {
-                const contentFilterResults =
-                  textmoderation[0]?.content_filter_results;
-                console.log(
-                  `[${ServiceProvider.Azure}] [Text Moderation] flagged categories result:`,
-                  contentFilterResults,
-                );
-              }
-            } catch (e) {
-              console.error("[Request] parse error", text, msg);
-            }
-          },
-          onclose() {
-            finish();
-          },
-          onerror(e) {
-            options.onError?.(e);
-            throw e;
-          },
-          openWhenHidden: true,
-        });
+        //       if (
+        //         textmoderation &&
+        //         textmoderation.length > 0 &&
+        //         ServiceProvider.Azure
+        //       ) {
+        //         const contentFilterResults =
+        //           textmoderation[0]?.content_filter_results;
+        //         console.log(
+        //           `[${ServiceProvider.Azure}] [Text Moderation] flagged categories result:`,
+        //           contentFilterResults,
+        //         );
+        //       }
+        //     } catch (e) {
+        //       console.error("[Request] parse error", text, msg);
+        //     }
+        //   },
+        //   onclose() {
+        //     finish();
+        //   },
+        //   onerror(e) {
+        //     options.onError?.(e);
+        //     throw e;
+        //   },
+        //   openWhenHidden: true,
+        // });
       } else {
         const length = messages?.length || 1;
         const mes = messages[length - 1];
