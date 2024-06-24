@@ -1,6 +1,38 @@
 import { BuiltinMask } from "./typing";
 export const CN_MASKS: BuiltinMask[] = [
   {
+    avatar: "270d-fe0f",
+    name: "联网回复",
+    target: "联网回复生成器",
+    context: [
+      {
+        id: "net-0",
+        role: "user",
+        content: "",
+        date: "",
+      },
+      {
+        id: "net-1",
+        role: "assistant",
+        content: "正在使用联网回复功能",
+        date: "",
+      },
+    ],
+    modelConfig: {
+      model: "gpt-3.5-turbo",
+      temperature: 1,
+      max_tokens: 2000,
+      presence_penalty: 0,
+      frequency_penalty: 0,
+      sendMemory: false,
+      historyMessageCount: 4,
+      compressMessageLengthThreshold: 1000,
+    },
+    lang: "cn",
+    builtin: true,
+    createdAt: 1688899480537,
+  },
+  {
     avatar: "1f638",
     name: "朋友圈文案生成器",
     context: [
@@ -103,38 +135,6 @@ export const CN_MASKS: BuiltinMask[] = [
     builtin: true,
     createdAt: 1688899480536,
     target: "高情商回复生成器",
-  },
-  {
-    avatar: "270d-fe0f",
-    name: "联网回复",
-    target: "联网回复生成器",
-    context: [
-      {
-        id: "net-0",
-        role: "user",
-        content: "",
-        date: "",
-      },
-      {
-        id: "net-1",
-        role: "assistant",
-        content: "正在使用联网回复功能",
-        date: "",
-      },
-    ],
-    modelConfig: {
-      model: "gpt-3.5-turbo",
-      temperature: 1,
-      max_tokens: 2000,
-      presence_penalty: 0,
-      frequency_penalty: 0,
-      sendMemory: false,
-      historyMessageCount: 4,
-      compressMessageLengthThreshold: 1000,
-    },
-    lang: "cn",
-    builtin: true,
-    createdAt: 1688899480537,
   },
 ];
 

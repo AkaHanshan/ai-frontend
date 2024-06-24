@@ -14,7 +14,7 @@ export const ANTHROPIC_BASE_URL = "https://api.anthropic.com";
 
 export const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/";
 
-export const AI_EXPERIENCE_URL = "http://localhost:3030";
+export const AI_EXPERIENCE_URL = "http://localhost:10010";
 
 export enum Path {
   Home = "/",
@@ -88,7 +88,7 @@ export const Anthropic = {
 };
 
 export const OpenaiPath = {
-  ChatPath: "get-message",
+  ChatPath: "chat/getStreamAnswer",
   UsagePath: "dashboard/billing/usage",
   SubsPath: "dashboard/billing/subscription",
   ListModelPath: "v1/models",

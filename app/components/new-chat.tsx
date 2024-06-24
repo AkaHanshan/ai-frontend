@@ -113,11 +113,6 @@ export function NewChat() {
   return (
     <div className={styles["new-chat"]}>
       <div className={styles["mask-header"]}>
-        <IconButton
-          icon={<LeftIcon />}
-          text={Locale.NewChat.Return}
-          onClick={() => navigate(Path.Home)}
-        ></IconButton>
         {/* {!state?.fromHome && (
           <IconButton
             text={Locale.NewChat.NotShow}

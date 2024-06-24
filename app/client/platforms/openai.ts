@@ -139,7 +139,7 @@ export class ChatGPTApi implements LLMApi {
 
     console.log("[Request] openai payload: ", requestPayload);
 
-    const shouldStream = false;
+    const shouldStream = true;
     const controller = new AbortController();
     options.onController?.(controller);
 
@@ -200,112 +200,111 @@ export class ChatGPTApi implements LLMApi {
         };
 
         controller.signal.onabort = finish;
+        const length = messages?.length || 1;
+        const mes = messages[length - 1];
+        const fetchData = () => {
+          fetch(`${AI_EXPERIENCE_URL}/chat/getStreamAnswer`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              text: mes.content,
+              target: requestPayload?.target,
+            }),
+          })
+            .then((response) => {
+              if (!response.body) {
+                throw new Error("Stream not supported");
+              }
+              // use ReadableStream
+              return response.body;
+            })
+            .then((body) => {
+              const reader = body.getReader();
+              const decoder = new TextDecoder();
 
-        // fetchEventSource(chatPath, {
-        //   ...chatPayload,
-        //   async onopen(res) {
-        //     clearTimeout(requestTimeoutId);
-        //     const contentType = res.headers.get("content-type");
-        //     console.log(
-        //       "[OpenAI] request response content type: ",
-        //       contentType,
-        //     );
-
-        //     if (contentType?.startsWith("text/plain")) {
-        //       responseText = await res.clone().text();
-        //       return finish();
-        //     }
-
-        //     if (
-        //       !res.ok ||
-        //       !res.headers
-        //         .get("content-type")
-        //         ?.startsWith(EventStreamContentType) ||
-        //       res.status !== 200
-        //     ) {
-        //       const responseTexts = [responseText];
-        //       let extraInfo = await res.clone().text();
-        //       try {
-        //         const resJson = await res.clone().json();
-        //         extraInfo = prettyObject(resJson);
-        //       } catch {}
-
-        //       if (res.status === 401) {
-        //         responseTexts.push(Locale.Error.Unauthorized);
-        //       }
-
-        //       if (extraInfo) {
-        //         responseTexts.push(extraInfo);
-        //       }
-
-        //       responseText = responseTexts.join("\n\n");
-
-        //       return finish();
-        //     }
-        //   },
-        //   onmessage(msg) {
-        //     if (msg.data === "[DONE]" || finished) {
-        //       return finish();
-        //     }
-        //     const text = msg.data;
-        //     try {
-        //       const json = JSON.parse(text);
-        //       const choices = json.choices as Array<{
-        //         delta: { content: string };
-        //       }>;
-        //       const delta = choices[0]?.delta?.content;
-        //       const textmoderation = json?.prompt_filter_results;
-
-        //       if (delta) {
-        //         remainText += delta;
-        //       }
-
-        //       if (
-        //         textmoderation &&
-        //         textmoderation.length > 0 &&
-        //         ServiceProvider.Azure
-        //       ) {
-        //         const contentFilterResults =
-        //           textmoderation[0]?.content_filter_results;
-        //         console.log(
-        //           `[${ServiceProvider.Azure}] [Text Moderation] flagged categories result:`,
-        //           contentFilterResults,
-        //         );
-        //       }
-        //     } catch (e) {
-        //       console.error("[Request] parse error", text, msg);
-        //     }
-        //   },
-        //   onclose() {
-        //     finish();
-        //   },
-        //   onerror(e) {
-        //     options.onError?.(e);
-        //     throw e;
-        //   },
-        //   openWhenHidden: true,
-        // });
+              return new ReadableStream({
+                start(controller) {
+                  return readStream(controller);
+                  function readStream(controller: any) {
+                    reader.read().then(({ done, value }) => {
+                      if (done) {
+                        controller.close();
+                        return;
+                      }
+                      // add message to
+                      const decodedText = decoder.decode(value);
+                      remainText += decodedText;
+                      return readStream(controller);
+                    });
+                  }
+                },
+              });
+            })
+            .then((stream) => {
+              return new Response(stream).text();
+            })
+            .then((text) => {
+              options.onFinish(text);
+              return finish();
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        };
+        fetchData();
       } else {
         const length = messages?.length || 1;
         const mes = messages[length - 1];
-        const fetchData = async () => {
-          try {
-            const response = await fetch(`${AI_EXPERIENCE_URL}/get-message`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                text: mes.content,
-                target: requestPayload?.target,
-              }),
+        const fetchData = () => {
+          fetch(`${AI_EXPERIENCE_URL}/chat/getStreamAnswer`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              text: mes.content,
+              target: requestPayload?.target,
+            }),
+          })
+            .then((response) => {
+              if (!response.body) {
+                throw new Error("Stream not supported");
+              }
+              // 使用ReadableStream
+              return response.body;
+            })
+            .then((body) => {
+              const reader = body.getReader();
+              const decoder = new TextDecoder();
+
+              return new ReadableStream({
+                start(controller) {
+                  return readStream(controller);
+
+                  function readStream(controller: any) {
+                    reader.read().then(({ done, value }) => {
+                      if (done) {
+                        controller.close();
+                        return;
+                      }
+                      const decodedText = decoder.decode(value);
+                      return readStream(controller);
+                    });
+                  }
+                },
+              });
+            })
+            .then((stream) => {
+              return new Response(stream).text();
+            })
+            .then((text) => {
+              options.onFinish(text);
+            })
+            .catch((error) => {
+              console.error("Error:", error);
             });
-            const result = await response.json();
-            options.onFinish(result.data.message);
-            console.log("[Response]", result);
-          } catch (error) {
-            console.error("Error fetching data: ", error);
-          }
         };
         fetchData();
       }
