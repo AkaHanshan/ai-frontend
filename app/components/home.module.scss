@@ -5,7 +5,7 @@
   box-shadow: var(--shadow);
   color: var(--black);
   background-color: var(--white);
-  min-width: 600px;
+  min-width: 10000px;
   min-height: 370px;
   max-width: 1200px;
 
@@ -21,7 +21,7 @@
   @include container();
 }
 
-@media only screen and (min-width: 600px) {
+@media only screen and (min-width: 10000px) {
   .tight-container {
     --window-width: 100vw;
     --window-height: var(--full-height);
@@ -105,7 +105,7 @@
   display: none;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 10000px) {
   .container {
     min-height: unset;
     min-width: unset;

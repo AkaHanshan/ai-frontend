@@ -19,7 +19,7 @@
   right: 0;
   top: calc(100% + 10px);
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 10000px) {
   .popover-content {
     width: auto;
   }
@@ -155,7 +155,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 10000px) {
   .modal-container {
     width: 100vw;
     border-bottom-left-radius: 0;

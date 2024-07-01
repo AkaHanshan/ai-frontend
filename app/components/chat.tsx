@@ -343,20 +343,27 @@ function ChatAction(props: {
 }) {
   const iconRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+
   const [width, setWidth] = useState({
-    full: 16,
-    icon: 16,
+    full: 38,
+    icon: 38,
   });
 
+  useEffect(() => {
+    updateWidth();
+  }, []);
+
   function updateWidth() {
-    if (!iconRef.current || !textRef.current) return;
-    const getWidth = (dom: HTMLDivElement) => dom.getBoundingClientRect().width;
-    const textWidth = getWidth(textRef.current);
-    const iconWidth = getWidth(iconRef.current);
-    setWidth({
-      full: textWidth + iconWidth,
-      icon: iconWidth,
-    });
+    if (iconRef.current && textRef.current) {
+      const getWidth = (dom: HTMLDivElement) =>
+        dom.getBoundingClientRect().width;
+      const textWidth = getWidth(textRef.current);
+      const iconWidth = getWidth(iconRef.current);
+      setWidth({
+        full: textWidth + iconWidth,
+        icon: iconWidth,
+      });
+    }
   }
 
   return (
@@ -364,10 +371,7 @@ function ChatAction(props: {
       className={`${styles["chat-input-action"]} clickable`}
       onClick={() => {
         props.onClick();
-        setTimeout(updateWidth, 1);
       }}
-      onMouseEnter={updateWidth}
-      onTouchStart={updateWidth}
       style={
         {
           "--icon-width": `${width.icon}px`,
@@ -457,7 +461,7 @@ export function ChatActions(props: {
 
   useEffect(() => {
     // const show = isVisionModel(currentModel);
-    const show = true;
+    const show = false;
     setShowUploadImage(show);
     if (!show) {
       props.setAttachImages([]);
@@ -545,7 +549,7 @@ export function ChatActions(props: {
         }}
       />
 
-      <ChatAction
+      {/* <ChatAction
         onClick={() => setShowModelSelector(true)}
         text={currentModel}
         icon={<RobotIcon />}
@@ -568,7 +572,7 @@ export function ChatActions(props: {
             showToast(s[0]);
           }}
         />
-      )}
+      )} */}
     </div>
   );
 }
